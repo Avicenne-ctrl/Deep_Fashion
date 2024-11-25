@@ -1,0 +1,17 @@
+
+train: /Users/avicenne/Documents/python/deep_fashion/datasets/data_train/images/train/ # train images (relative to 'path') 128 images
+val: /Users/avicenne/Documents/python/deep_fashion/datasets/data_train/images/val/ # val images (relative to 'path') 128 images
+
+# Classes
+
+names:
+ 0 : Denim
+ 1 : Jackets
+ 2 : Pants
+ 3 : Sweaters
+ 4 : Rompers_Jumpsuits
+ 5 : Cardigans
+ 6 : Shirts
+ 7 : Short
+ 8 : Dresses
+
