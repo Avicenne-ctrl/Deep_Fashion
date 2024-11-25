@@ -1,16 +1,8 @@
 from flask import Flask, render_template, request
-import sys
-import os
-import matplotlib.pyplot as plt
 
-import roboflow
-from roboflow import Roboflow
-from ultralytics import YOLO
-import torch
-
-import scripts.clothes_extraction as ce
 import scripts.search_engine as se
 import scripts.search_engine_img as sei
+import scripts.main_utilities as mu
 
 import pandas as pd
 
@@ -27,7 +19,7 @@ data_color     = pd.read_csv(PATH_DATA_COLORS_CSV)
 image_names    = neighbors_data["id"]
 
 # Get the list of all the images in the data folder
-path_img_list, img_names = ce.get_extension_folder(PATH_IMG_FOLDER, EXTENSION_IMG)
+path_img_list, img_names = mu.get_extension_folder(PATH_IMG_FOLDER, EXTENSION_IMG)
 
 # Get unique value from the dataframe
 tops_unique          = neighbors_data["top"].dropna().unique()
@@ -85,3 +77,4 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True, threaded=False)
+    

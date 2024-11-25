@@ -10,7 +10,7 @@ import roboflow
 import torch
 
 import scripts.search_engine as se
-import scripts.clothes_extraction as ce
+import scripts.main_utilities as mu
 
 # Load model
 device = torch.device('cpu')
@@ -77,7 +77,7 @@ def search_engine_img(model_object: YOLO,
         _type_: _description_
     """
     
-    outfit_detected = ce.detect_person_outfit_image(model_object, model_outfit, img, data_color)
+    outfit_detected = mu.detect_person_outfit_image(model_object, model_outfit, img, data_color)
             
     results = similar_outfit_for_image(outfit_detected, neighbors_data, nb_similar, list_index)
     
