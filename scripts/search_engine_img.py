@@ -11,12 +11,20 @@ import torch
 
 import scripts.search_engine as se
 import scripts.main_utilities as mu
+import configparser
+
+# Read config file
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+YOLO_MODEL          = config["MODEL"]["YOLO_MODEL"]
+ROBOFLOW_MODEL      = config["MODEL"]["ROBOFLOW_MODEL"]
 
 # Load model
 device = torch.device('cpu')
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-MODEL_DETECT_OBJ    = YOLO('yolov8n.pt')
+MODEL_DETECT_OBJ    = YOLO(YOLO_MODEL)
 MODEL_DETECT_OBJ.to(device) 
 
 # Connect to Roboflow
@@ -24,7 +32,7 @@ roboflow.login()
 rf = Roboflow()
 
 # Load pretrained model for clothes recognition
-project = rf.workspace().project("clothes-detection-1kl0o")
+project = rf.workspace().project(ROBOFLOW_MODEL)
 fashion = project.version(4).model
 
 

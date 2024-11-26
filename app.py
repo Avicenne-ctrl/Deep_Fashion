@@ -5,21 +5,31 @@ import scripts.search_engine_img as sei
 import scripts.main_utilities as mu
 
 import pandas as pd
+import configparser
 
-PATH_DATA_CLOTHES_CSV = "static/clothes_data.csv"
-PATH_DATA_COLORS_CSV  = "static/data_color.csv"
-PATH_IMG_FOLDER       = "static/images/"
+# Read config file
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+PATH_IMAGES_FOLDER  = config["PATH"]["PATH_IMAGES_FOLDER"]
+PATH_DATA_COLOR     = config["PATH"]["PATH_DATA_COLOR"]
+PATH_SAVE_DATA      = config["PATH"]["PATH_SAVE_DATA"]
+
+YOLO_MODEL          = config["MODEL"]["YOLO_MODEL"]
+ROBOFLOW_MODEL      = config["MODEL"]["ROBOFLOW_MODEL"]
+
 EXTENSION_IMG         = ["jpeg", "png", "jpg"]
 
+
 # Dataset with image path and its clothes, color description
-neighbors_data = pd.read_csv(PATH_DATA_CLOTHES_CSV)
-data_color     = pd.read_csv(PATH_DATA_COLORS_CSV)
+neighbors_data = pd.read_csv(PATH_SAVE_DATA)
+data_color     = pd.read_csv(PATH_DATA_COLOR)
 
 # we save id list and drop
 image_names    = neighbors_data["id"]
 
 # Get the list of all the images in the data folder
-path_img_list, img_names = mu.get_extension_folder(PATH_IMG_FOLDER, EXTENSION_IMG)
+path_img_list, img_names = mu.get_extension_folder(PATH_IMAGES_FOLDER, EXTENSION_IMG)
 
 # Get unique value from the dataframe
 tops_unique          = neighbors_data["top"].dropna().unique()
@@ -53,7 +63,7 @@ def index():
         if image_query is not None and image_query != "":
             print(f"[INFO] : similarity search given an image {image_query}")
 
-            image_query_path = PATH_IMG_FOLDER + image_query
+            image_query_path = PATH_IMAGES_FOLDER + image_query
             results = sei.main_search_img(image_query_path, data_color, neighbors_data, quantite, path_img_list)
             
             return render_template('index.html', imageList = results, tops= tops_unique, top_color= tops_color_unique, bottom= bottoms_unique, bottom_color= bottoms_color_unique)
