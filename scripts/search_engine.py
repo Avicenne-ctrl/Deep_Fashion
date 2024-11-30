@@ -1,16 +1,9 @@
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler, StandardScaler
+from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import pandas as pd
-from sklearn.impute import KNNImputer
-import matplotlib
-import seaborn as sns
-import webcolors
+
 from sklearn.neighbors import NearestNeighbors
-from typing import List, Tuple, Optional
-from sklearn.cluster import KMeans
-from collections import Counter
-from typing import Dict
+from typing import List, Dict
 
 def get_knn_similarities(neighbors_data: pd.DataFrame,
                             nb_similarities: int,
@@ -57,6 +50,7 @@ def get_knn_similarities(neighbors_data: pd.DataFrame,
     
     # the most similar line in the dataset
     distance, indices = list(knn.kneighbors(np.array(neighbors_queries_encode.values), nb_similarities, return_distance = True))
+    
     sol = [List_index[indice] for indice in indices[0]]
         
     return sol

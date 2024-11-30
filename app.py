@@ -5,6 +5,7 @@ import scripts.search_engine_img as sei
 import scripts.main_utilities as mu
 
 import pandas as pd
+from collections import Counter
 import configparser
 
 # Read config file
@@ -26,7 +27,7 @@ neighbors_data = pd.read_csv(PATH_SAVE_DATA)
 data_color     = pd.read_csv(PATH_DATA_COLOR)
 
 # we save id list and drop
-image_names    = neighbors_data["id"]
+image_names    = [PATH_IMAGES_FOLDER + img_name for img_name in neighbors_data["id"]]
 
 # Get the list of all the images in the data folder
 path_img_list, img_names = mu.get_extension_folder(PATH_IMAGES_FOLDER, EXTENSION_IMG)
@@ -36,6 +37,11 @@ tops_unique          = neighbors_data["top"].dropna().unique()
 bottoms_unique       = neighbors_data["bottom"].dropna().unique()
 tops_color_unique    = neighbors_data["top_color"].dropna().unique()
 bottoms_color_unique = neighbors_data["bottom_color"].dropna().unique()
+
+print(tops_unique)
+print(bottoms_unique)
+print(tops_color_unique)
+print(bottoms_color_unique)
 
 app = Flask(__name__)
 @app.route("/")
@@ -64,9 +70,10 @@ def index():
             print(f"[INFO] : similarity search given an image {image_query}")
 
             image_query_path = PATH_IMAGES_FOLDER + image_query
-            results = sei.main_search_img(image_query_path, data_color, neighbors_data, quantite, path_img_list)
+            results = sei.main_search_img(image_query_path, data_color, neighbors_data, quantite, image_names)
             
-            return render_template('index.html', imageList = results, tops= tops_unique, top_color= tops_color_unique, bottom= bottoms_unique, bottom_color= bottoms_color_unique)
+            non_duplicates_result = list(Counter(results).keys())
+            return render_template('index.html', imageList = non_duplicates_result, tops= tops_unique, top_color= tops_color_unique, bottom= bottoms_unique, bottom_color= bottoms_color_unique)
             
         # If not image uplaoded -> use the input data
         if len(quantite) != 0 and (len(top_color) + len(bottom_color)+len(top) + len(bottom) != 0) and (image_query is None or image_query == ""):   
@@ -78,13 +85,14 @@ def index():
             print(f"[INFO] : similarity search given a query {neighbors_queries}")
 
             # the main algo which will returns the images for the corresponding input
-            resultats = se.get_search_by_knn(neighbors_queries, quantite, neighbors_data, path_img_list)
+            resultats = se.get_search_by_knn(neighbors_queries, quantite, neighbors_data, image_names)
 
             # we display images on the web site
-            return render_template('index.html', imageList = resultats, tops= tops_unique, top_color= tops_color_unique, bottom= bottoms_unique, bottom_color= bottoms_color_unique)
+            non_duplicates_result = list(Counter(resultats).keys())
+            return render_template('index.html', imageList = non_duplicates_result, tops= tops_unique, top_color= tops_color_unique, bottom= bottoms_unique, bottom_color= bottoms_color_unique)
         
     return render_template('index.html', imageList = path_img_list, tops= tops_unique, top_color= tops_color_unique, bottom= bottoms_unique, bottom_color= bottoms_color_unique)
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=False)
+    app.run(debug=True, host="0.0.0.0", port="5050", threaded=False)
     

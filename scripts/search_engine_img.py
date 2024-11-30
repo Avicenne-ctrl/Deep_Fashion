@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
-from typing import List, Tuple, Optional
+from typing import List
 
 from ultralytics import YOLO
 from roboflow import Roboflow
@@ -27,9 +27,12 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 MODEL_DETECT_OBJ    = YOLO(YOLO_MODEL)
 MODEL_DETECT_OBJ.to(device) 
 
+# Token Roboflow
+roboflow_token = os.getenv("ROBOFLOW_TOKEN")
+if roboflow_token is None:
+    print("[ERROR] : No RoboFlow Token Provided")
 # Connect to Roboflow
-roboflow.login()
-rf = Roboflow()
+rf = Roboflow(roboflow_token)
 
 # Load pretrained model for clothes recognition
 project = rf.workspace().project(ROBOFLOW_MODEL)
@@ -86,6 +89,8 @@ def search_engine_img(model_object: YOLO,
     """
     
     outfit_detected = mu.detect_person_outfit_image(model_object, model_outfit, img, data_color)
+    
+    print(outfit_detected)
             
     results = similar_outfit_for_image(outfit_detected, neighbors_data, nb_similar, list_index)
     

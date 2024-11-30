@@ -1,14 +1,8 @@
-from ultralytics import YOLO
-import numpy
-import cv2
 import numpy as np
-from typing import List, Dict
-from roboflow import Roboflow
 from sklearn.cluster import KMeans
 from collections import Counter
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
-import os
 import pandas as pd
 
 

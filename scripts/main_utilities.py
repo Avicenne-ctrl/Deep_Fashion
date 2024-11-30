@@ -1,13 +1,7 @@
 from ultralytics import YOLO
-import numpy
-import cv2
 import numpy as np
-from typing import List, Dict
+from typing import List
 from roboflow import Roboflow
-from sklearn.cluster import KMeans
-from collections import Counter
-from sklearn.neighbors import NearestNeighbors
-import matplotlib.pyplot as plt
 import os
 import pandas as pd
 
@@ -15,7 +9,16 @@ import scripts.extract_clothes_roboflow as ecr
 import scripts.extract_main_color as emc
 import scripts.extract_person_yolo as epy
 
-def get_clothes_and_color(model: Roboflow, person_image: np.ndarray, database_color:pd.DataFrame, confidence: float = 0.3):
+import configparser
+# Read config file
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+TOP_ITEMS          = config["CLOTHES_TYPE"]["TOP_ITEMS"].split(",")
+BOTTOM_ITEMS       = config["CLOTHES_TYPE"]["BOTTOM_ITEMS"].split(",")
+
+
+def get_clothes_and_color(model: Roboflow, person_image: np.ndarray, database_color:pd.DataFrame, confidence: float = 0.3, top_items: List[str] = TOP_ITEMS, bottom_items: List[str] = BOTTOM_ITEMS):
     """Detect clothes on an image with associated color
         Need to update hard coded list containing name of clothes depending on top or bottom
 
@@ -31,15 +34,18 @@ def get_clothes_and_color(model: Roboflow, person_image: np.ndarray, database_co
                 
             confidence (float, optional): 
                 The confidence value for the accuracy. Defaults to 0.3.
+                
+            top_items (List[str], optional): 
+                List of itmes for top clothes. Defaults to 0.3.
+                
+            bottom_items (List[str], optional): 
+                List of itmes for bottom clothes. Defaults to 0.3.
             
         Returns:
             (Dict[str, List[float]]):
                 dict with clothe name as a key and corresponding bounding boxe as a value
     """
-    
-    
-    top_items    = ["shirt", "jacket", "t-shirt", "tee shirt", "polar", ""]
-    bottom_items = ["pants", "cargo"]
+
     data_clothes = {"bottom" : np.nan, "bottom_color": np.nan, "top": np.nan, "top_color": np.nan}
     
     clothes = ecr.detect_clothes_on_person(model, person_image)
@@ -52,7 +58,7 @@ def get_clothes_and_color(model: Roboflow, person_image: np.ndarray, database_co
             clothes_img = epy.bounding_yolovn(item, person_image)
             rgb_color   = emc.get_dominant_color(clothes_img)
             color_name  = emc.get_name_rgb_color(rgb_color, database_color)
-                
+            
             if key in top_items:
                 data_clothes["top"] = key
                 data_clothes["top_color"] = color_name.lower()

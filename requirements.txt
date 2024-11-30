@@ -1,0 +1,8 @@
+pandas
+flask
+numpy
+scikit-learn
+ultralytics
+torch
+opencv-python
+roboflow
