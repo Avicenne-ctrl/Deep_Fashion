@@ -14,10 +14,26 @@ Ever found yourself staring at your closet, unsure how to style your clothes? Ma
 
 ## How to use this repository :
 
-`git clone `  
+### Copy the app repository  
+`git clone https://github.com/Avicenne-ctrl/Deep_Fashion.git`  
 
-### Specify your RoboFlow Token API
-`export ROBOFLOW_TOKEN=your_token_roboflow`  
+### Install dependencies  
+`pip install -r requirements.txt`  
 
-### Start the app.py
-`python app.py`  
+### Specify your RoboFlow Token API  
+`export ROBOFLOW_TOKEN=your_token_roboflow`   
+
+### Start the app.py  
+`python app.py`   
+
+## How to modify the image dataset :
+- This app is limited by the default dataset of images stored in : `static/images/`. You can add your own images
+- If you have updated the dataset of images, you have to follow each step in the `create_data_clothes.ipynb` to update the ``clothes_data.csv`
+
+## How to change model detection :
+- the model are specified in the config.ini
+- you can change it directly in the config.ini
+
+## Limitations :
+- the precision really depend on the quality of the RoboFlow model
+- the color detection can be wrong because it only detect the main color on an image. So if the main element is the background, then the color is not the color of the clothe detected
